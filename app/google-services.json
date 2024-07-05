@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_id": "HumanDetection4Tasker-4f843",
+    "project_number": "973182941123",
+    "name": "HumanDetection Tasker Plugin"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629182941492:android:765f46cdf2b4779e",
+        "client_id": "android:online.avogadro.opencv4tasker",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "online.avogadro.opencv4tasker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "BHzaSyASz7Fo1191jy1gfdEiga6PXGF2qMpvPpQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 0
+        },
+        "cloud_messaging_service": {
+          "status": 0,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 0,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 0
+        },
+        "ads_service": {
+          "status": 0
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

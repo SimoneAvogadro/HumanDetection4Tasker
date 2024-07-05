@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- TODO: why do we need this? the Tasker SDK seems to fail to use proper modern android methods -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- TASKER PLUGIN -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <application
+        android:name="online.avogadro.opencv4tasker.app.OpenCV4TaskerApplication"
+        android:requestLegacyExternalStorage="true"
+        android:allowBackup="true"
+        android:icon="@mipmap/opencv4tasker"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/opencv4tasker"
+        android:theme="@style/AppTheme">
+        <activity android:name="online.avogadro.opencv4tasker.MainActivity" />
+        <activity
+            android:name="online.avogadro.opencv4tasker.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Tasker plugin entry point -->
+        <activity
+            android:name="online.avogadro.opencv4tasker.tasker.ActivityConfigDetectHumansAction"
+            android:exported="true"
+            android:icon="@mipmap/human_detection"
+            android:label="Detect humans in the picture">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

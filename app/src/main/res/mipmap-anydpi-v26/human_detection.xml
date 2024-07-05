@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  <background android:drawable="@mipmap/human_detection_background"/>
+  <foreground android:drawable="@mipmap/human_detection_foreground"/>
+  <monochrome android:drawable="@mipmap/human_detection_monochrome"/>
+</adaptive-icon>
