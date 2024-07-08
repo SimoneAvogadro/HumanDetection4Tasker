@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -51,15 +52,18 @@ public class SplashActivity extends AppCompatActivity {
                     ,Manifest.permission.WRITE_EXTERNAL_STORAGE
                     ,Manifest.permission.READ_MEDIA_IMAGES
                     ,Manifest.permission.FOREGROUND_SERVICE
-            }; // ,   Manifest.permission.RECORD_AUDIO
+                    ,Manifest.permission.MANAGE_EXTERNAL_STORAGE
+            };
 
     private void verifyStoragePermissions(Activity activity) {
         try {
-            int EXTERNAL_STORAGE = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int READ_EXTERNAL_STORAGE = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int MANAGE_EXTERNAL_STORAGE = ActivityCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
             int READ_MEDIA_IMAGES = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_IMAGES);
             //int START_FOREGROUND_SERVICES_FROM_BACKGROUND = ActivityCompat.checkSelfPermission(activity, Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND);
             int FOREGROUND_SERVICE = ActivityCompat.checkSelfPermission(activity, Manifest.permission.FOREGROUND_SERVICE);
-            if (       EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED
+            if (       READ_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED
+                    || MANAGE_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED
                     || READ_MEDIA_IMAGES != PackageManager.PERMISSION_GRANTED
                     // || READ_MEDIA_IMAGES != PackageManager.PERMISSION_GRANTED
                     || FOREGROUND_SERVICE != PackageManager.PERMISSION_GRANTED

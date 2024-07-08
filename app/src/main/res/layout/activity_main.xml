@@ -7,19 +7,28 @@
     android:orientation="vertical"
     tools:context="online.avogadro.opencv4tasker.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:textAlignment="center" />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/testImagePath"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="content://media/external/images/media/1000000036" />
+        <EditText
+            android:id="@+id/testImagePath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="80"
+            android:ems="10"
+            android:inputType="text"
+            android:text="content://media/external/images/media/1000000036" />
+
+        <Button
+            android:id="@+id/buttonPickFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="..." />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonTest"

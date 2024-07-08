@@ -2,6 +2,8 @@ Plugin app for Tasker and MacroDroid to provide Humans Detection
 
 Licensed under GPL v3
 
+V 1.0.2 - added file picker an 
+
 Features:
 * Provides a tasker action capable to open an image and return a score 0-100 in term of how likely the image contains a person
 * simple home screen to test it against local images
@@ -23,7 +25,7 @@ IMPORTANT Caveats:
 * SECURITY: it's not yet using any secret but just in case change the value off SharedPreferencesHelper.PASSWORD: it's used to encrypt any local settings (currently unused) and it's ad additional form of security in case your phone gets compromised
 
 HOW-TO use it:
-* build&install the APK
+* install the APK (you can download it from the GitHub releases) 
 * start it: so that it's registered and available to Tasker/Macrodroid
 * within Macrodroid/Tasker
     * go to the task you want to use
@@ -31,6 +33,13 @@ HOW-TO use it:
     * you get a window where to enter the name of the image, usually you'll want to use a variable instead of an hard-coded value (e.g. %my_image )
     * then you get a window where you say where to save the result, usually another variable (e.g. detection_score)
     * then do whatever you want with the information :-)
+
+HOW-TO test it:
+* start the app
+* grant the permission it requires
+* use the file picker to choose an image
+* press the "test recognition" button
+* see what's the score
 
 E.g. my use case is simple: I want to reduce to almost zero the false positive alarms of some security cameras 
 * listen for alerts from (cheap?) security cameras

@@ -12,7 +12,7 @@ android {
     }
     defaultConfig {
         applicationId "online.avogadro.opencv4tasker"
-        minSdkVersion 28
+        minSdkVersion 30
         targetSdkVersion 33
         versionCode 432
         versionName "4.3.0"

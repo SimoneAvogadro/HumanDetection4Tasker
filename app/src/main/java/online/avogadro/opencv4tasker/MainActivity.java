@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import online.avogadro.opencv4tasker.R;
 import online.avogadro.opencv4tasker.opencv.HumansDetector;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import org.opencv.android.OpenCVLoader;
@@ -18,11 +20,27 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "HumanDetectionActivity";
+    private static final int PICK_IMAGE = 1;
+
+    EditText testImagePath;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+            if (selectedImage!=null)
+                testImagePath.setText(selectedImage.toString());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        testImagePath = findViewById(R.id.testImagePath);
 
         if (!OpenCVLoader.initLocal()) {
             Log.e(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
@@ -31,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
         }
 
-        Button testRecognition = findViewById(R.id.buttonTest);
-        testRecognition.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.buttonTest).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "file:///sdcard/Pictures/Image1719668651.jpg"
@@ -50,8 +67,15 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // processImage("file:///sdcard/Pictures/Image1719668651.jpg");
-                EditText testImagePath = findViewById(R.id.testImagePath);
                 processImage(testImagePath.getText().toString());
+            }
+        });
+        findViewById(R.id.buttonPickFile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, PICK_IMAGE);
             }
         });
     }
