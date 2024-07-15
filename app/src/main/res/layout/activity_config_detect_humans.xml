@@ -12,7 +12,7 @@
         android:text="Image name" />
 
     <EditText
-        android:id="@+id/editCameraID"
+        android:id="@+id/editFileName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

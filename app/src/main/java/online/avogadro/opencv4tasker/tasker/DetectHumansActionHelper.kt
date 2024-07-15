@@ -27,11 +27,11 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
     private lateinit var binding: ActivityConfigDetectHumansBinding
 
     override fun assignFromInput(input: TaskerInput<DetectHumansInput>) {
-        binding?.editCameraID?.setText(input.regular.imagePath);
+        binding?.editFileName?.setText(input.regular.imagePath);
     }
 
     override val inputForTasker: TaskerInput<DetectHumansInput> get() {
-        return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editCameraID?.text?.toString()))
+        return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString()))
     }
 
     override val context get() = applicationContext
