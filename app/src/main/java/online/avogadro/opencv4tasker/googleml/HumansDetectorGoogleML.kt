@@ -3,10 +3,14 @@ package online.avogadro.opencv4tasker.googleml
 import android.content.Context
 import android.graphics.Rect
 import android.net.Uri
+import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
+import online.avogadro.opencv4tasker.app.Util
+import online.avogadro.opencv4tasker.opencv.HumansDetector
 import java.io.File
+import java.io.IOException
 
 object HumansDetectorGoogleML {
     private val objectDetector by lazy {
@@ -67,6 +71,22 @@ object HumansDetectorGoogleML {
     }
 
     fun detectPersonConfidence(
+        context: Context,
+        imagePath: String
+    ): Int {
+        var newPath: String? = null
+        return try {
+            newPath = Util.contentToFile(context, imagePath)
+            detectPersonConfidenceInFile(context, newPath)
+        } catch (e: IOException) {
+            Log.e("HumansDetectorGoogleML", "Failed to parse file name $imagePath", e)
+            -1
+        } finally {
+            if (newPath != null && imagePath != newPath) File(newPath).delete()
+        }
+    }
+
+    fun detectPersonConfidenceInFile(
         context: Context,
         imagePath: String
     ): Int {
