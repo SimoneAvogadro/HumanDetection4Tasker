@@ -5,5 +5,6 @@ import com.joaomgcd.taskerpluginlibrary.input.TaskerInputRoot
 
 @TaskerInputRoot
 class DetectHumansInput @JvmOverloads constructor(
-        @field:TaskerInputField("imagePath") var imagePath: String? = null
+        @field:TaskerInputField("imagePath") var imagePath: String? = null,
+        @field:TaskerInputField("engine") var engine: String? = null
 )

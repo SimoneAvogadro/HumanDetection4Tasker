@@ -8,7 +8,7 @@ import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
 import java.io.File
 
-class HumanDetectorGoogleML {
+object HumansDetectorGoogleML {
     private val objectDetector by lazy {
         val options = ObjectDetectorOptions.Builder()
             .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
