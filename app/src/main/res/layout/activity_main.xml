@@ -30,6 +30,24 @@
 
     </LinearLayout>
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/radioEngineOpenCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="OpenCV" />
+
+        <RadioButton
+            android:id="@+id/radioEngineGoogleML"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Google ML" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/buttonTest"
         android:layout_width="match_parent"

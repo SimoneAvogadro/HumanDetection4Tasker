@@ -2,6 +2,7 @@ package online.avogadro.opencv4tasker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import online.avogadro.opencv4tasker.R;
+import online.avogadro.opencv4tasker.googleml.HumansDetectorGoogleML;
 import online.avogadro.opencv4tasker.opencv.HumansDetector;
 
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "HumanDetectionActivity";
     private static final int PICK_IMAGE = 1;
+
+    static final String ENGINE_OPENCV = "OPENCV";
+    static final String ENGINE_GOOGLEML = "GOOGLEML";
 
     EditText testImagePath;
 
@@ -82,14 +87,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void processImage(String imageUri) {
         TextView resultTextView = findViewById(R.id.resultTextView);
+        String engine = ENGINE_OPENCV;
+        RadioButton radioGoogle =(RadioButton)findViewById(R.id.radioEngineGoogleML);
 
-        int detectionScore = HumansDetector.detectHumans(this, imageUri);
+        int detectionScore = -99;
+        if (radioGoogle.isChecked()) {
+            engine = ENGINE_GOOGLEML;
+            detectionScore = HumansDetectorGoogleML.INSTANCE.detectPersonConfidence(this, imageUri);
+        } else {    // default = openCV
+            detectionScore = HumansDetector.detectHumans(this, imageUri);
+        }
         if (detectionScore==-1) {
             resultTextView.setText("Failed to execute detection");
             return;
         }
 
-        resultTextView.setText("Detection score: "+detectionScore);
+        resultTextView.setText("Detection score: "+detectionScore+" "+engine);
 
 //            StringBuilder result = new StringBuilder();
 //            result.append("Number of humans detected: ").append(rects.length).append("\n\n");

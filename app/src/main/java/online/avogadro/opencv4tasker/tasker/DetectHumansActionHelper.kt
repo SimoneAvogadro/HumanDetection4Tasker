@@ -34,16 +34,19 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
         binding?.editFileName?.setText(input.regular.imagePath);
 
         if (ENGINE_GOOGLEML.equals(input.regular.engine)) {
-            binding?.radioEngineOpenCV?.isActivated=false;
-            binding?.radioEngineGoogleML?.isActivated=true;
+            binding?.radioEngineOpenCV?.isChecked=false;
+            binding?.radioEngineGoogleML?.isChecked=true;
         } else { // null or anything else
-            binding?.radioEngineOpenCV?.isActivated=true;
-            binding?.radioEngineGoogleML?.isActivated=false;
+            binding?.radioEngineOpenCV?.isChecked=true;
+            binding?.radioEngineGoogleML?.isChecked=false;
         }
     }
 
     override val inputForTasker: TaskerInput<DetectHumansInput> get() {
-        return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString()))
+        var engine = ENGINE_OPENCV
+        if (binding?.radioEngineGoogleML?.isChecked()==true)
+            engine = ENGINE_GOOGLEML
+        return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString(),engine))
     }
 
     override val context get() = applicationContext
