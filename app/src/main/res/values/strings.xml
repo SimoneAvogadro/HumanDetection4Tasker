@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OpenCV Vision Tasker Plugin</string>
+    <string name="app_name">Human Detection Tasker Plugin</string>
     <string name="com_user_name">account</string>
     <string name="toast_success">Success</string>
     <string name="toast_fail">Failed</string>
