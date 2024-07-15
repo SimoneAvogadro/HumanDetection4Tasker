@@ -1,7 +1,6 @@
 package online.avogadro.opencv4tasker.opencv;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import org.opencv.core.Mat;
@@ -28,7 +27,7 @@ public class HumansDetector {
     public static int detectHumans(Context context, String path) {
         String newPath = null;
         try {
-            newPath = contentToFile(context,path);
+            newPath = Util.contentToFile(context,path);
             return detectHumansFromFile(newPath);
         } catch (IOException e) {
             Log.e(TAG, "Failed to parse file name "+path,e);
@@ -37,42 +36,6 @@ public class HumansDetector {
             if (newPath!=null && !path.equals(newPath))
                 new File(newPath).delete();
         }
-//        if (path.startsWith("file:")) {
-//            return detectHumansFromFile(path);
-//        } else if (path.startsWith("content:")) {
-//            String filePath = "";
-//            try {
-//                filePath = getPathFromUri(context, Uri.parse(path));
-//                return detectHumansFromFile(filePath);
-//            } catch (IOException e) {
-//                Log.e(TAG, "Failed to parse file name "+path,e);
-//                return -1;
-//            } finally {
-//                new File(filePath).delete();
-//            }
-//        } else {
-//            Log.d(TAG,"formato path sconosciuto");
-//            return -1;
-//        }
-    }
-
-    /**
-     * OpenCV and other libs are unable to handle content:// URIs
-     * This method handls this for them by copying to a temporary file
-     *
-     * @param path
-     * @return
-     */
-    public static String contentToFile(Context context, String path) throws IOException {
-        if (path.startsWith("file:")) {
-            return path;
-        } else if (path.startsWith("content:")) {
-            return Util.getPathFromUri(context, Uri.parse(path));
-        } else {
-            Log.w(TAG,"formato path sconosciuto");
-            return path;
-        }
-
     }
 
     /**

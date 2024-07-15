@@ -6,13 +6,18 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import online.avogadro.opencv4tasker.opencv.HumansDetector;
+
 public class Util {
+
+    private static final String TAG = "Util";
 
     public static String getMetadata(Context c, String key) {
         try {
@@ -59,5 +64,24 @@ public class Util {
         inputStream.close();
 
         return tempFile.getAbsolutePath();
+    }
+
+    /**
+     * OpenCV and other libs are unable to handle content:// URIs
+     * This method handls this for them by copying to a temporary file
+     *
+     * @param path
+     * @return
+     */
+    public static String contentToFile(Context context, String path) throws IOException {
+        if (path.startsWith("file:")) {
+            return path;
+        } else if (path.startsWith("content:")) {
+            return getPathFromUri(context, Uri.parse(path));
+        } else {
+            Log.w(TAG,"formato path sconosciuto");
+            return path;
+        }
+
     }
 }
