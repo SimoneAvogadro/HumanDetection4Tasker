@@ -1,6 +1,5 @@
 package online.avogadro.opencv4tasker.opencv;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -13,35 +12,13 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.objdetect.HOGDescriptor;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
+import online.avogadro.opencv4tasker.app.Util;
 
 public class HumansDetector {
 
     private static final String TAG = "HumansDetector";
-
-    public static String getPathFromUri(Context context, Uri uri) throws IOException {
-        ContentResolver resolver = context.getContentResolver();
-        InputStream inputStream = resolver.openInputStream(uri);
-
-        // Create temporary file
-        File tempFile = File.createTempFile("temp_image", ".jpg", context.getCacheDir());
-        tempFile.deleteOnExit();
-
-        // Copy input stream to temporary file
-        FileOutputStream out = new FileOutputStream(tempFile);
-        byte[] buffer = new byte[64*1024];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-        out.flush();
-        out.close();
-        inputStream.close();
-
-        return tempFile.getAbsolutePath();
-    }
 
     /**
      * Detect humans and return the highest score
@@ -90,7 +67,7 @@ public class HumansDetector {
         if (path.startsWith("file:")) {
             return path;
         } else if (path.startsWith("content:")) {
-            return getPathFromUri(context, Uri.parse(path));
+            return Util.getPathFromUri(context, Uri.parse(path));
         } else {
             Log.w(TAG,"formato path sconosciuto");
             return path;
