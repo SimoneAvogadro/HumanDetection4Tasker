@@ -11,6 +11,8 @@ import online.avogadro.opencv4tasker.app.Util
 import online.avogadro.opencv4tasker.opencv.HumansDetector
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 object HumansDetectorGoogleML {
     private val objectDetector by lazy {
@@ -92,14 +94,29 @@ object HumansDetectorGoogleML {
     ): Int {
         var confidence=-1f;
         var exception:Exception?=null;
+        val latch = CountDownLatch(1)
+        val u = Uri.fromFile(File(imagePath))
+        val img = InputImage.fromFilePath(context, u)
         detectPersonConfidence(
-            InputImage.fromFilePath(context, Uri.fromFile(File(imagePath))),
-            { c -> confidence=c },
-            { e -> exception = e });
+            img,
+            { c ->
+                confidence=c
+                latch.countDown()
+            },
+            { e ->
+                exception = e
+                latch.countDown()
+            });
+
+        latch.await(10, TimeUnit.SECONDS)
+
         if (exception!=null)
             throw exception as Exception
 
-        return (confidence*100).toInt()
+        if (confidence==-1f)
+            return -1;
+        else
+            return (confidence*100).toInt()
     }
 
 }
