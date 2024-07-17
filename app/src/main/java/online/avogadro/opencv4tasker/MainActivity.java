@@ -49,12 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         testImagePath = findViewById(R.id.testImagePath);
 
-        if (!OpenCVLoader.initLocal()) {
-            Log.e(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            Toast.makeText(this,"FAILED TO INIT OpenCV",Toast.LENGTH_SHORT).show();
-        } else {
-            Log.d(TAG, "OpenCV library found inside package. Using it!");
-        }
+
 
         findViewById(R.id.buttonTest).setOnClickListener(new View.OnClickListener() {
             @Override

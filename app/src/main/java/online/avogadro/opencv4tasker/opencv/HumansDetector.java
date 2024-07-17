@@ -2,7 +2,9 @@ package online.avogadro.opencv4tasker.opencv;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfRect;
@@ -25,6 +27,14 @@ public class HumansDetector {
      * @return 0-100+, lower values are lower scores. '-1' is a failure
      */
     public static int detectHumans(Context context, String path) {
+        if (!OpenCVLoader.initLocal()) {
+            Log.e(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            // Toast.makeText(this,"FAILED TO INIT OpenCV",Toast.LENGTH_SHORT).show();
+            return -1;
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+        }
+
         String newPath = null;
         try {
             newPath = Util.contentToFile(context,path);
