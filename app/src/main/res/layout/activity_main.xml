@@ -19,7 +19,7 @@
             android:layout_weight="80"
             android:ems="10"
             android:inputType="text"
-            android:text="content://media/external/images/media/1000000036" />
+            android:text="content://media/external/images/media/1000000081" />
 
         <Button
             android:id="@+id/buttonPickFile"

@@ -13,9 +13,10 @@ import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultSucess
 import online.avogadro.opencv4tasker.databinding.ActivityConfigDetectHumansBinding;
 import online.avogadro.opencv4tasker.googleml.HumansDetectorGoogleML
 import online.avogadro.opencv4tasker.opencv.HumansDetector
+import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow
 
 const val ENGINE_OPENCV = "OPENCV"
-const val ENGINE_GOOGLEML = "GOOGLEML"
+const val ENGINE_TENSORFLOW = "TENSORFLOW"
 
 class DetectHumansActionHelper(config: TaskerPluginConfig<DetectHumansInput>) : TaskerPluginConfigHelper<DetectHumansInput, DetectHumansOutput, DetectHumansActionRunner>(config) {
     override val runnerClass: Class<DetectHumansActionRunner> get() = DetectHumansActionRunner::class.java
@@ -33,7 +34,7 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
     override fun assignFromInput(input: TaskerInput<DetectHumansInput>) {
         binding?.editFileName?.setText(input.regular.imagePath);
 
-        if (ENGINE_GOOGLEML.equals(input.regular.engine)) {
+        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
             binding?.radioEngineOpenCV?.isChecked=false;
             binding?.radioEngineGoogleML?.isChecked=true;
         } else { // null or anything else
@@ -45,7 +46,7 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
     override val inputForTasker: TaskerInput<DetectHumansInput> get() {
         var engine = ENGINE_OPENCV
         if (binding?.radioEngineGoogleML?.isChecked()==true)
-            engine = ENGINE_GOOGLEML
+            engine = ENGINE_TENSORFLOW
         return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString(),engine))
     }
 
@@ -69,11 +70,11 @@ class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, Det
         var result: Int = 0
 
         // Here the plugin EXECUTES
-        if (ENGINE_GOOGLEML.equals(input.regular.engine)) {
+        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
             var path = input.regular.imagePath;
             if (path==null)
                 path="FAIL"
-            result = HumansDetectorGoogleML.detectPersonConfidence(context, path);
+            result = HumansDetectorTensorFlow.detectHumans(context, path);
         } else { // in any other case use default = OpenCV
             result = HumansDetector.detectHumans(context, input.regular.imagePath);
         }

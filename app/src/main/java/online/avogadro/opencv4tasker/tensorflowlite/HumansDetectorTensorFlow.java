@@ -27,6 +27,17 @@ public class HumansDetectorTensorFlow {
     private ObjectDetector objectDetector;
     static final String TAG = "HumansDetectorTensorFlow";
 
+    /**
+     * Detect humans and return the highest score
+     * @param path in the form of file:///{something} or content:///{something}
+     * @return 0-100+, lower values are lower scores. '-1' is a failure
+     */
+    public static int detectHumans(Context context, String path) throws IOException {
+        HumansDetectorTensorFlow htc = new HumansDetectorTensorFlow();
+        htc.setup(context);
+        return htc.detectPerson(context,path);
+    }
+
     public void setup(Context ctx) throws IOException {
         objectDetector = ObjectDetector.createFromBufferAndOptions(
                 loadModelFile(ctx),

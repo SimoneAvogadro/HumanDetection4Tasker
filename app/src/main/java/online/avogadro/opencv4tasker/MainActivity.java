@@ -1,8 +1,6 @@
 package online.avogadro.opencv4tasker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import online.avogadro.opencv4tasker.R;
-import online.avogadro.opencv4tasker.googleml.HumansDetectorGoogleML;
 import online.avogadro.opencv4tasker.opencv.HumansDetector;
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow;
 
@@ -12,19 +10,14 @@ import android.os.Bundle;
 
 import org.opencv.android.OpenCVLoader;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
 
     static final String ENGINE_OPENCV = "OPENCV";
-    static final String ENGINE_GOOGLEML = "GOOGLEML";
+    static final String ENGINE_TENSORFLOW = "TENSORFLOW";
 
     EditText testImagePath;
 
@@ -42,8 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
-            if (selectedImage!=null)
+            if (selectedImage!=null) {
                 testImagePath.setText(selectedImage.toString());
+                Log.d(TAG,"New file: "+selectedImage.toString());
+            }
         }
     }
 
@@ -99,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         int detectionScore = -99;
         if (radioGoogle.isChecked()) {
-            engine = ENGINE_GOOGLEML;
+            engine = ENGINE_TENSORFLOW;
 //            ExecutorService executor = Executors.newSingleThreadExecutor();
 //            Handler handler = new Handler(Looper.getMainLooper());
 //
