@@ -63,7 +63,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // ML Kit Object Detection
-    implementation 'com.google.mlkit:object-detection:17.0.1'
+    // implementation 'com.google.mlkit:object-detection:17.0.1'
 
     // Tensorflow based detection
     implementation 'org.tensorflow:tensorflow-lite:2.5.0'

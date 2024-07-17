@@ -45,7 +45,7 @@
             android:id="@+id/radioEngineGoogleML"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Google ML" />
+            android:text="Tensorflow Lite" />
     </RadioGroup>
 
     <Button
