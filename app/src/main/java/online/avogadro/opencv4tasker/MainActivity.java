@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     EditText testImagePath;
 
+    HumansDetectorTensorFlow h = null;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -104,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
 //            });
             // detectionScore = HumansDetectorGoogleML.INSTANCE.detectPersonConfidence(this, imageUri);
             try {
-                HumansDetectorTensorFlow h = new HumansDetectorTensorFlow();
-                h.setup(this);
+                if (h==null) {
+                    h = new HumansDetectorTensorFlow();
+                    h.setup(this);
+                }
                 detectionScore = h.detectPerson(this, imageUri);
             } catch (IOException e) {
                 resultTextView.setText("Failed to execute detection "+e.getMessage());
