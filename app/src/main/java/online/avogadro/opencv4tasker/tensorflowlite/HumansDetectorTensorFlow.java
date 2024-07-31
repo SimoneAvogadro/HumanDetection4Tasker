@@ -48,12 +48,16 @@ public class HumansDetectorTensorFlow {
     }
 
     private MappedByteBuffer loadModelFile(Context ctx) throws IOException {
-        AssetFileDescriptor fileDescriptor = ctx.getAssets().openFd("lite-model_efficientdet_lite0_detection_metadata_1.tflite");
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        // Model source: https://www.kaggle.com/models/tensorflow/efficientdet/tfLite/lite0-detection-metadata/1?tfhub-redirect=true
+        try (
+                AssetFileDescriptor fileDescriptor = ctx.getAssets().openFd("lite-model_efficientdet_lite0_detection_metadata_1.tflite");
+                FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor())
+        ) {
+            FileChannel fileChannel = inputStream.getChannel();
+            long startOffset = fileDescriptor.getStartOffset();
+            long declaredLength = fileDescriptor.getDeclaredLength();
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        }
     }
 
     public int detectPerson(Context ctx, String imagePath) {
@@ -86,7 +90,7 @@ public class HumansDetectorTensorFlow {
             Log.e(TAG, "Failed to parse file name "+newPath,e);
             return -1;
         } finally {
-            if (newPath!=null && !newPath.equals(newPath))
+            if (newPath!=null && !newPath.equals(imagePath))
                 new File(newPath).delete();
         }
 
