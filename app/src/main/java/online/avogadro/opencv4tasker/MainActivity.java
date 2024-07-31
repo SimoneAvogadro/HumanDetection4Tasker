@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import org.opencv.android.OpenCVLoader;
+// import org.opencv.android.OpenCVLoader;
 
 import android.util.Log;
 import android.view.View;
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         RadioButton radioGoogle =(RadioButton)findViewById(R.id.radioEngineGoogleML);
 
         int detectionScore = -99;
-        if (radioGoogle.isChecked()) {
+//        if (radioGoogle.isChecked()) {
             engine = ENGINE_TENSORFLOW;
 //            ExecutorService executor = Executors.newSingleThreadExecutor();
 //            Handler handler = new Handler(Looper.getMainLooper());
@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 resultTextView.setText("Failed to execute detection "+e.getMessage());
             }
-        } else {    // default = openCV
-            detectionScore = HumansDetector.detectHumans(this, imageUri);
-        }
+//        } else {    // default = openCV
+//            detectionScore = HumansDetector.detectHumans(this, imageUri);
+//        }
         if (detectionScore==-1) {
             resultTextView.setText("Failed to execute detection");
             return;
