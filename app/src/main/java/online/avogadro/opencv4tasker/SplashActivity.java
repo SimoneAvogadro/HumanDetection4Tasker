@@ -121,8 +121,10 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goToActivity(Class dest) {
         Intent intent = new Intent(this, dest);
+        // no back-to-splachscreen!
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        // finish();    // No more: la dobbiamo lasciare attiva
+        finish();
     }
 
 //    public static void loginWithStoredCredentials(Context ctx, ILoginCallback then) {
