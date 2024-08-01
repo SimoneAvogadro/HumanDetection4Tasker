@@ -48,8 +48,10 @@ public class HumansDetectorTensorFlow {
     }
 
     private MappedByteBuffer loadModelFile(Context ctx) throws IOException {
-        // Model source: https://www.kaggle.com/models/tensorflow/efficientdet/tfLite/lite0-detection-metadata/1?tfhub-redirect=true
         try (
+                // Model source: https://www.kaggle.com/models/kaggle/yolo-v5
+                // AssetFileDescriptor fileDescriptor = ctx.getAssets().openFd("yolo-v5-tflite-tflite-tflite-model-v1.tflite");
+                // Model source: https://www.kaggle.com/models/tensorflow/efficientdet/tfLite/lite0-detection-metadata/1?tfhub-redirect=true
                 AssetFileDescriptor fileDescriptor = ctx.getAssets().openFd("lite-model_efficientdet_lite0_detection_metadata_1.tflite");
                 FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor())
         ) {
