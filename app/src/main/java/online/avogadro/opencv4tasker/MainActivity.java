@@ -1,7 +1,7 @@
 package online.avogadro.opencv4tasker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import online.avogadro.opencv4tasker.opencv.HumansDetector;
+import online.avogadro.opencv4tasker.claudeai.HumansDetectorClaudeAI;
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow;
 
 import android.content.Intent;
@@ -10,21 +10,24 @@ import android.os.Bundle;
 
 // import org.opencv.android.OpenCVLoader;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "HumanDetectionActivity";
     private static final int PICK_IMAGE = 1;
 
-    static final String ENGINE_OPENCV = "OPENCV";
+    static final String ENGINE_CLAUDE_AI = "CLAUDE";
     static final String ENGINE_TENSORFLOW = "TENSORFLOW";
 
     EditText testImagePath;
@@ -82,16 +85,26 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, PICK_IMAGE);
             }
         });
+        findViewById(R.id.buttonSetup).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void processImage(String imageUri) {
         TextView resultTextView = findViewById(R.id.resultTextView);
-        String engine = ENGINE_OPENCV;
-        RadioButton radioGoogle =(RadioButton)findViewById(R.id.radioEngineGoogleML);
+        String engine = ENGINE_CLAUDE_AI;
+        RadioButton radioGoogle =(RadioButton)findViewById(R.id.radioEngineTensorflowLite);
 
         int detectionScore = -99;
-//        if (radioGoogle.isChecked()) {
+        if (radioGoogle.isChecked()) {
             engine = ENGINE_TENSORFLOW;
+        } else {
+            engine = ENGINE_CLAUDE_AI;
+        }
 //            ExecutorService executor = Executors.newSingleThreadExecutor();
 //            Handler handler = new Handler(Looper.getMainLooper());
 //
@@ -105,24 +118,44 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //            });
             // detectionScore = HumansDetectorGoogleML.INSTANCE.detectPersonConfidence(this, imageUri);
-            try {
+        try {
+            if (engine==ENGINE_TENSORFLOW) {
                 if (h==null) {
                     h = new HumansDetectorTensorFlow();
                     h.setup(this);
                 }
                 detectionScore = h.detectPerson(this, imageUri);
-            } catch (IOException e) {
-                resultTextView.setText("Failed to execute detection "+e.getMessage());
-            }
-//        } else {    // default = openCV
-//            detectionScore = HumansDetector.detectHumans(this, imageUri);
-//        }
-        if (detectionScore==-1) {
-            resultTextView.setText("Failed to execute detection");
-            return;
-        }
+                if (detectionScore==-1) {
+                    resultTextView.setText("Failed to execute detection");
+                    return;
+                } else {
+                    resultTextView.setText("Detection score: "+detectionScore+" "+engine);
+                }
+            } else {    // default = Claude
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                executor.execute(() -> {
+                    try {
+                        // Background work here
+                        HumansDetectorClaudeAI h = new HumansDetectorClaudeAI();
+                        h.setup(this);
+                        int result = h.detectPerson(this, imageUri);
 
-        resultTextView.setText("Detection score: "+detectionScore+" "+engine);
+                        handler.post(() -> {
+                            // UI Thread work here
+                            resultTextView.setText("Detection score: "+result+" "+ENGINE_CLAUDE_AI);
+                        });
+                    } catch (IOException e) {
+                        handler.post(() -> {
+                            resultTextView.setText("Detection error: " + e.getMessage());
+                        });
+                    }
+                });
+
+            }
+        } catch (IOException e) {
+            resultTextView.setText("Failed to execute detection "+e.getMessage());
+        }
 
 //            StringBuilder result = new StringBuilder();
 //            result.append("Number of humans detected: ").append(rects.length).append("\n\n");

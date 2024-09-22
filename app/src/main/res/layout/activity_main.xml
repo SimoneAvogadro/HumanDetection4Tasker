@@ -7,6 +7,18 @@
     android:orientation="vertical"
     tools:context="online.avogadro.opencv4tasker.MainActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonSetup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Setup" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,17 +47,17 @@
         android:layout_height="wrap_content" >
 
         <RadioButton
-            android:id="@+id/radioEngineOpenCV"
+            android:id="@+id/radioEngineClaudeAI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Claude.AI API (online)" />
+
+        <RadioButton
+            android:id="@+id/radioEngineTensorflowLite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="OpenCV" />
-
-        <RadioButton
-            android:id="@+id/radioEngineGoogleML"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tensorflow Lite" />
+            android:text="Tensorflow Lite (local device)" />
     </RadioGroup>
 
     <Button

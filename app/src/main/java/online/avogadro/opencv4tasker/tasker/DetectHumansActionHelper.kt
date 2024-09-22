@@ -11,11 +11,9 @@ import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResult
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultErrorWithOutput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultSucess
 import online.avogadro.opencv4tasker.databinding.ActivityConfigDetectHumansBinding;
-import online.avogadro.opencv4tasker.googleml.HumansDetectorGoogleML
-import online.avogadro.opencv4tasker.opencv.HumansDetector
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow
 
-const val ENGINE_OPENCV = "OPENCV"
+const val ENGINE_CLAUDEAI = "CLAUDE"
 const val ENGINE_TENSORFLOW = "TENSORFLOW"
 
 class DetectHumansActionHelper(config: TaskerPluginConfig<DetectHumansInput>) : TaskerPluginConfigHelper<DetectHumansInput, DetectHumansOutput, DetectHumansActionRunner>(config) {
@@ -35,17 +33,17 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
         binding?.editFileName?.setText(input.regular.imagePath);
 
         if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
-            binding?.radioEngineOpenCV?.isChecked=false;
-            binding?.radioEngineGoogleML?.isChecked=true;
+            binding?.radioEngineClaudeAI?.isChecked=false;
+            binding?.radioEngineTensorflowLite?.isChecked=true;
         } else { // null or anything else
-            binding?.radioEngineOpenCV?.isChecked=true;
-            binding?.radioEngineGoogleML?.isChecked=false;
+            binding?.radioEngineClaudeAI?.isChecked=true;
+            binding?.radioEngineTensorflowLite?.isChecked=false;
         }
     }
 
     override val inputForTasker: TaskerInput<DetectHumansInput> get() {
-        var engine = ENGINE_OPENCV
-        if (binding?.radioEngineGoogleML?.isChecked()==true)
+        var engine = ENGINE_CLAUDEAI
+        if (binding?.radioEngineTensorflowLite?.isChecked()==true)
             engine = ENGINE_TENSORFLOW
         return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString(),engine))
     }

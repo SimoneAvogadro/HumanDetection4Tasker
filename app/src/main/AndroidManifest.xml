@@ -26,6 +26,7 @@
         android:roundIcon="@mipmap/opencv4tasker"
         android:theme="@style/AppTheme">
         <activity android:name="online.avogadro.opencv4tasker.MainActivity" />
+        <activity android:name="online.avogadro.opencv4tasker.ConfigActivity" />
         <activity
             android:name="online.avogadro.opencv4tasker.SplashActivity"
             android:exported="true">
