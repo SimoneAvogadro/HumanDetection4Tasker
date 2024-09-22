@@ -34,13 +34,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="OpenCV" />
+            android:text="Claude.AI (online)" />
 
         <RadioButton
             android:id="@+id/radioEngineTensorflowLite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tensorflow Lite" />
+            android:text="Tensorflow Lite (local device)" />
     </RadioGroup>
 
     <Button

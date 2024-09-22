@@ -10,6 +10,7 @@ import com.joaomgcd.taskerpluginlibrary.input.TaskerInput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResult
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultErrorWithOutput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultSucess
+import online.avogadro.opencv4tasker.claudeai.HumansDetectorClaudeAI
 import online.avogadro.opencv4tasker.databinding.ActivityConfigDetectHumansBinding;
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow
 
@@ -68,14 +69,14 @@ class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, Det
         var result: Int = 0
 
         // Here the plugin EXECUTES
-//        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
+        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
             var path = input.regular.imagePath;
             if (path==null)
                 path="FAIL"
             result = HumansDetectorTensorFlow.detectHumans(context, path);
-//        } else { // in any other case use default = OpenCV
-//            result = HumansDetector.detectHumans(context, input.regular.imagePath);
-//        }
+        } else { // in any other case use default = ClaudeAI
+            result = HumansDetectorClaudeAI.detectHumans(context, input.regular.imagePath);
+        }
 
         if (result == -1) {
             return TaskerPluginResultErrorWithOutput(-1,"Failed to perform detection on "+input.regular.imagePath)
