@@ -33,13 +33,13 @@
             android:id="@+id/radioEngineClaudeAI"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="Claude.AI (online)" />
 
         <RadioButton
             android:id="@+id/radioEngineTensorflowLite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Tensorflow Lite (local device)" />
     </RadioGroup>
 

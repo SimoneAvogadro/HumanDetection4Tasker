@@ -10,6 +10,7 @@ import com.joaomgcd.taskerpluginlibrary.input.TaskerInput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResult
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultErrorWithOutput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultSucess
+import online.avogadro.opencv4tasker.app.SharedPreferencesHelper
 import online.avogadro.opencv4tasker.claudeai.HumansDetectorClaudeAI
 import online.avogadro.opencv4tasker.databinding.ActivityConfigDetectHumansBinding;
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow
@@ -40,6 +41,14 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
             // Local Tensorflow == default (backward compatibility!)
             binding?.radioEngineClaudeAI?.isChecked=false;
             binding?.radioEngineTensorflowLite?.isChecked=true;
+        }
+
+        // disable Claude options if there's no API KEY
+        var apiKey = SharedPreferencesHelper.get(this, SharedPreferencesHelper.CLAUDE_API_KEY)
+        if ("".equals(apiKey)) {
+            binding?.radioEngineClaudeAI?.isEnabled = false
+            binding?.radioEngineClaudeAI?.isChecked = false
+            binding?.radioEngineTensorflowLite?.isChecked=true
         }
     }
 
