@@ -33,19 +33,20 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
     override fun assignFromInput(input: TaskerInput<DetectHumansInput>) {
         binding?.editFileName?.setText(input.regular.imagePath);
 
-        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
-            binding?.radioEngineClaudeAI?.isChecked=false;
-            binding?.radioEngineTensorflowLite?.isChecked=true;
-        } else { // null or anything else
+        if (ENGINE_CLAUDEAI.equals(input.regular.engine)) {
             binding?.radioEngineClaudeAI?.isChecked=true;
             binding?.radioEngineTensorflowLite?.isChecked=false;
+        } else { // null or anything else
+            // Local Tensorflow == default (backward compatibility!)
+            binding?.radioEngineClaudeAI?.isChecked=false;
+            binding?.radioEngineTensorflowLite?.isChecked=true;
         }
     }
 
     override val inputForTasker: TaskerInput<DetectHumansInput> get() {
-        var engine = ENGINE_CLAUDEAI
-        if (binding?.radioEngineTensorflowLite?.isChecked()==true)
-            engine = ENGINE_TENSORFLOW
+        var engine = ENGINE_TENSORFLOW  // fail-safe local default
+        if (binding?.radioEngineClaudeAI?.isChecked()==true)
+            engine = ENGINE_CLAUDEAI
         return TaskerInput<DetectHumansInput>(DetectHumansInput(binding?.editFileName?.text?.toString(),engine))
     }
 
@@ -69,13 +70,14 @@ class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, Det
         var result: Int = 0
 
         // Here the plugin EXECUTES
-        if (ENGINE_TENSORFLOW.equals(input.regular.engine)) {
+        if (ENGINE_CLAUDEAI.equals(input.regular.engine)) {
+            result = HumansDetectorClaudeAI.detectHumans(context, input.regular.imagePath);
+        } else {
+            // default = TENSORFLOW
             var path = input.regular.imagePath;
             if (path==null)
                 path="FAIL"
             result = HumansDetectorTensorFlow.detectHumans(context, path);
-        } else { // in any other case use default = ClaudeAI
-            result = HumansDetectorClaudeAI.detectHumans(context, input.regular.imagePath);
         }
 
         if (result == -1) {

@@ -9,13 +9,15 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        >
 
         <Button
             android:id="@+id/buttonSetup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Setup" />
+            android:text="Settings" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -1,6 +1,7 @@
 package online.avogadro.opencv4tasker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import online.avogadro.opencv4tasker.app.SharedPreferencesHelper;
 import online.avogadro.opencv4tasker.claudeai.HumansDetectorClaudeAI;
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow;
 
@@ -48,13 +49,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        RadioButton claudeButton = findViewById(R.id.radioEngineClaudeAI);
+        if ("".equals(SharedPreferencesHelper.get(this, SharedPreferencesHelper.CLAUDE_API_KEY)))
+            claudeButton.setEnabled(false);
+        else
+            claudeButton.setEnabled(true);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         testImagePath = findViewById(R.id.testImagePath);
 
-
+        RadioButton claudeButton = findViewById(R.id.radioEngineClaudeAI);
+        if ("".equals(SharedPreferencesHelper.get(this, SharedPreferencesHelper.CLAUDE_API_KEY)))
+            claudeButton.setEnabled(false);
+        else
+            claudeButton.setEnabled(true);
 
         findViewById(R.id.buttonTest).setOnClickListener(new View.OnClickListener() {
             @Override
