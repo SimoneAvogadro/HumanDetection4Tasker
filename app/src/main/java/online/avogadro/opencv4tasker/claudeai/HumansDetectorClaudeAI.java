@@ -40,7 +40,10 @@ public class HumansDetectorClaudeAI {
     private static final String PROMPT_SYSTEM = "The user will be providing images taken from cheap security cameras, these images might be taken during the day or the night and the angle may vary. Please reply him with a single keyword, chosen among these:\\n* HUMAN: an human or a part of an human is visible in the frame\\n* SPIDER: no humans are visible but a spider is near the camera\\n* NONE: neither an human nor a spider are in frame\\n* UNCERTAIN: you were unable to tell in which of the above categories the image might fit. Use this response if you are not totally sure that the answer is one of the above";
 
     static final String TAG = "HumansDetectorClaudeAI";
-    public static final String CLAUDE_MODEL = "claude-3-5-sonnet-20240620";
+    public static final String CLAUDE_MODEL = "claude-3-5-sonnet-latest";
+
+    private static final String CONTENT_TYPE_JPG="image/jpeg";
+    private static final String CONTENT_TYPE_PNG="image/png";
 
     /**
      * Detect humans and return the highest score
@@ -109,11 +112,15 @@ public class HumansDetectorClaudeAI {
         JSONObject userMessage = new JSONObject();
         userMessage.put("role", "user");
 
+        String imageContentType = CONTENT_TYPE_JPG;
+        if (imagePath.toLowerCase().endsWith(".png"))
+            imageContentType = CONTENT_TYPE_PNG;
+
         JSONArray contentArray = new JSONArray();
         if (userPrompt!=null)
             contentArray.put(new JSONObject().put("type", "text").put("text", userPrompt));
 
-        contentArray.put(new JSONObject().put("type", "image").put("source", new JSONObject().put("type", "base64").put("media_type", "image/jpeg").put("data", imageBase64)));
+        contentArray.put(new JSONObject().put("type", "image").put("source", new JSONObject().put("type", "base64").put("media_type", imageContentType).put("data", imageBase64)));
 
         userMessage.put("content", contentArray);
         messages.put(userMessage);
