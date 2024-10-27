@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void processImage(String imageUri) {
         TextView resultTextView = findViewById(R.id.resultTextView);
+        resultTextView.setText("processing...");
         String engine = ENGINE_CLAUDE_AI;
         RadioButton radioGoogle =(RadioButton)findViewById(R.id.radioEngineTensorflowLite);
 
