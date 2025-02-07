@@ -38,13 +38,25 @@ public class HumansDetectorClaudeAI {
     private static final String API_URL = "https://api.anthropic.com/v1/messages";
 
     // private static final String PROMPT_SYSTEM = "The user will be providing images taken from cheap security cameras, these images might be taken during the day or the night and the angle may vary. Please reply him with a single keyword, chosen among these:\\n* HUMAN: an human or a part of an human is visible in the frame\\n* SPIDER: no humans are visible but a spider is near the camera\\n* NONE: neither an human nor a spider are in frame\\n* UNCERTAIN: you were unable to tell in which of the above categories the image might fit. Use this response if you are not totally sure that the answer is one of the above";
-    private static final String PROMPT_SYSTEM = "The user will be providing images taken from cheap security cameras, these images might be taken during the day or the night and the angle may vary. Please reply him with a single keyword, chosen among these:\n* HUMAN: an human or a part of an human is visible in the frame\n* SPIDER: no humans are visible but a spider is near the camera\n* CAT: if it's an animal or a cat, it may be a cat walking away from the camera or walking toward the camera\n* NONE: neither an human nor a spider are in frame\n* UNCERTAIN: you were unable to tell in which of the above categories the image might fit. Use this response if you are not totally sure that the answer is one of the above\nIgnore any shadows";
+    // private static final String PROMPT_SYSTEM = "The user will be providing images taken from cheap security cameras, these images might be taken during the day or the night and the angle may vary. Please reply him with a single keyword, chosen among these:\n* HUMAN: an human or a part of an human is visible in the frame\n* SPIDER: no humans are visible but a spider is near the camera\n* CAT: if it's an animal or a cat, it may be a cat walking away from the camera or walking toward the camera\n* NONE: neither an human nor a spider are in frame\n* UNCERTAIN: you were unable to tell in which of the above categories the image might fit. Use this response if you are not totally sure that the answer is one of the above\nIgnore any shadows";
+    private static final String PROMPT_SYSTEM=
+            "The user will be providing images taken from cheap security cameras, these images might be taken during the day or the night and the angle may vary. Images are usually taken top-down, during the night images may be blurry due to person's movements. Please reply him with a single keyword in the first line and a brief explanation of your choice in the second line, chosen among these:\n" +
+            "* HUMAN: an human or a part of an human (usually on the border of the image) is visible in the frame. The human may be seen from above since the camera is usually mounted on an high position\n" +
+            "* SPIDER: no humans are visible but a spider is near the camera\n" +
+            "* CAT: if it's an animal or a cat, it may be a cat walking away from the camera or walking toward the camera\n" +
+            "* NONE: neither an human nor a spider are in frame\n" +
+            "* UNCERTAIN: you were unable to tell in which of the above categories the image might fit. Use this response if you are not totally sure that the answer is one of the above\n" +
+            "Ignore any shadows";
 
     static final String TAG = "HumansDetectorClaudeAI";
     public static final String CLAUDE_MODEL = "claude-3-5-sonnet-latest";
 
     private static final String CONTENT_TYPE_JPG="image/jpeg";
     private static final String CONTENT_TYPE_PNG="image/png";
+
+    public String lastResponse = null;
+    public Exception lastException = null;
+    public String lastHttpResponse = null;
 
     /**
      * Detect humans and return the highest score
@@ -63,21 +75,30 @@ public class HumansDetectorClaudeAI {
 
 
     public int detectPerson(Context ctx, String imagePath) {
+        lastResponse = null;
+        lastException = null;
         String newPath = null;
         try {
             newPath = Util.contentToFile(ctx,imagePath);
             String claudeResponse = makeApiCall(PROMPT_SYSTEM, null, newPath);
-            if (claudeResponse.equals("HUMAN"))
+            lastResponse = claudeResponse;
+            String[] res=claudeResponse.split("\\r?\\n");
+            if (res[0].trim().equals("HUMAN"))
                 return 100;
-            else if (claudeResponse.equals("NONE"))
+            else if (res[0].trim().equals("NONE"))
                 return 0;
-            else if (claudeResponse.equals("SPIDER"))
+            else if (res[0].trim().equals("SPIDER"))
                 return 0;
+            else if (res[0].trim().equals("CAT"))
+                return 0;
+            else if (res[0].trim().equals("UNCERTAIN"))
+                return 30;
             else
                 return -1;  // issues
 
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Failed to examine file "+newPath,e);
+            lastException = e;
             return -1;
         } finally {
             if (newPath!=null && !newPath.equals(imagePath))
@@ -86,7 +107,18 @@ public class HumansDetectorClaudeAI {
 
     }
 
+    public String getLastResponse() {
+        return lastResponse;
+    }
+    public String getLastError() {
+        String res = lastHttpResponse;
+        if (lastException!=null)
+            res+="\n"+lastException;
+        return res;
+    }
+
     private String makeApiCall(String systemPrompt, String userPrompt, String imagePath) throws IOException, JSONException {
+        lastHttpResponse = null;
         URL url = new URL(API_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
@@ -142,6 +174,8 @@ public class HumansDetectorClaudeAI {
                 response.append(inputLine);
             }
             in.close();
+
+            lastHttpResponse = response.toString();
 
             JSONObject jsonResponse = new JSONObject(response.toString());
             JSONArray ja = jsonResponse.getJSONArray("content");

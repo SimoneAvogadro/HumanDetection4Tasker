@@ -5,6 +5,7 @@ import com.joaomgcd.taskerpluginlibrary.output.TaskerOutputVariable
 
 @TaskerOutputObject
 class DetectHumansOutput(
-        @get:TaskerOutputVariable("detectionScore") var detectionScore: Int? =0
+        @get:TaskerOutputVariable("detectionScore") var detectionScore: Int? =0,
+        @get:TaskerOutputVariable("detectionResponse") var detectionResponse: String? =""
 ) {
 }

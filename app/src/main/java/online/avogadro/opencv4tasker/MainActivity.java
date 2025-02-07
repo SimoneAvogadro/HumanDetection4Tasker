@@ -160,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
                         handler.post(() -> {
                             // UI Thread work here
-                            resultTextView.setText("Detection score: "+result+" "+ENGINE_CLAUDE_AI);
+                            if (result!=-1)
+                                resultTextView.setText("Detection score: "+result+" "+ENGINE_CLAUDE_AI+"\n"+h.lastResponse);
+                            else
+                                resultTextView.setText("Detection failure: "+h.lastHttpResponse+"\n"+ h.lastException);
                         });
                     } catch (IOException e) {
                         handler.post(() -> {

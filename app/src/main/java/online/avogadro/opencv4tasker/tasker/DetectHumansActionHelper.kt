@@ -77,10 +77,18 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
 class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, DetectHumansOutput>() {
     override fun run(context: Context, input: TaskerInput<DetectHumansInput>): TaskerPluginResult<DetectHumansOutput> {
         var result: Int = 0
+        var resultReason = "";
+        var resultError = "";
 
         // Here the plugin EXECUTES
         if (ENGINE_CLAUDEAI.equals(input.regular.engine)) {
-            result = HumansDetectorClaudeAI.detectHumans(context, input.regular.imagePath);
+            // result = HumansDetectorClaudeAI.detectHumans(context, input.regular.imagePath);
+            val htc = HumansDetectorClaudeAI()
+            htc.setup(context)
+            result = htc.detectPerson(context, input.regular.imagePath)
+            resultReason = htc.getLastResponse()
+            if (result==-1)
+                resultError = htc.lastError
         } else {
             // default = TENSORFLOW
             var path = input.regular.imagePath;
@@ -90,9 +98,12 @@ class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, Det
         }
 
         if (result == -1) {
-            return TaskerPluginResultErrorWithOutput(-1,"Failed to perform detection on "+input.regular.imagePath)
+            if (resultError.equals(""))
+                return TaskerPluginResultErrorWithOutput(-1,"Failed to perform detection on "+input.regular.imagePath)
+            else
+                return TaskerPluginResultErrorWithOutput(-1,"Failed to perform detection on "+input.regular.imagePath+" "+resultError)
         } else {
-            return TaskerPluginResultSucess(DetectHumansOutput(result))
+            return TaskerPluginResultSucess(DetectHumansOutput(result, resultReason))
         }
     }
 }
