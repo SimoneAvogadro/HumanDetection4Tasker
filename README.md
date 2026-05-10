@@ -56,6 +56,7 @@ Features:
 
 Supported person detection/image analysis engines:
 * MediaPipe (local, uses TensorFlow model): runs entirely on the phone, limited accuracy but very privacy-savvy
+* Gemma 4 E2B (local, multimodal VLM via LiteRT-LM): runs entirely on the phone, model (~2.4 GB) is downloaded on-demand from HuggingFace into private app storage. Better accuracy than MediaPipe at the cost of disk space and ~3 GB of RAM at inference time
 * Claude Sonnet 4.6 (online): will send the data to Anthropic's cloud LLM, which can perform many complex tasks. Very accurate
 * Gemini Flash 2.5 (online): will send the data to Google's cloud LLM, which can perform many complex tasks. Accurate and cheap
 * OpenRouter (online): will send the data to OpenRouter's cloud, which in turn will forward to the LLM you have selected. This way you can choose the cost (from free to very expensive) and accuracy of the model
@@ -67,7 +68,7 @@ Limitations:
 Ideas for future improvements:
 * [DONE] ~~Support for PNG with Claude/Gemini~~
 * [DONE] ~~Support for Openrouter.ai~~
-* [WIP] support for running locally Google Gemma 3n (code present but disabled — crashes at runtime, needs investigation)
+* [DONE] ~~support for running locally Google Gemma 4 E2B (multimodal VLM via LiteRT-LM, downloaded on demand from HuggingFace)~~
 * [DISCARDED] ~~Support for ChatGPT-Vision~~ (superseded by OpenRouter allowing the use of ChatGPT Vision!)
 * [DONE] ~~Support for generic Claude/ChatGPT actions~~
 

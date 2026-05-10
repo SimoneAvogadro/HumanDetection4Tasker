@@ -1,29 +1,26 @@
 package online.avogadro.opencv4tasker;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import online.avogadro.opencv4tasker.app.SharedPreferencesHelper;
-import online.avogadro.opencv4tasker.app.Util;
+import online.avogadro.opencv4tasker.gemma4.Gemma4ModelDownloader;
+
+import java.io.File;
 
 public class ConfigActivity extends AppCompatActivity {
 
     private static final String TAG = "ConfigActivity";
-    private static final int REQUEST_PICK_GEMMA_MODEL = 2001;
-    private static final String GEMMA3N_HUGGINGFACE_URL =
-            "https://huggingface.co/google/gemma-3n-E2B-it-litert-lm/resolve/main/gemma-3n-E2B-it-int4.litertlm";
 
     // Known model IDs for the spinners. The last entry ("") signals Custom.
     private static final String[] CLAUDE_MODEL_IDS = {
@@ -55,7 +52,11 @@ public class ConfigActivity extends AppCompatActivity {
     EditText openRouterApiKey;
     EditText openRouterModel;
 
-    TextView gemma3nModelPathLabel;
+    private TextView gemma4StatusLabel;
+    private ProgressBar gemma4ProgressBar;
+    private Button gemma4DownloadBtn;
+    private Button gemma4DeleteBtn;
+    private Gemma4ModelDownloader gemma4Downloader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,22 +170,14 @@ public class ConfigActivity extends AppCompatActivity {
         else
             openRouterModel.setText(SharedPreferencesHelper.DEFAULT_OPENROUTER_MODEL);
 
-        // --- Gemma 3n ---
-        gemma3nModelPathLabel = findViewById(R.id.gemma3nModelPathLabel);
-        String savedGemma3nPath = SharedPreferencesHelper.get(this, SharedPreferencesHelper.GEMMA3N_MODEL_PATH);
-        updateGemma3nPathLabel(savedGemma3nPath);
-
-        findViewById(R.id.buttonGemma3nDownload).setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GEMMA3N_HUGGINGFACE_URL));
-            startActivity(browserIntent);
-        });
-
-        findViewById(R.id.buttonGemma3nSelect).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            startActivityForResult(intent, REQUEST_PICK_GEMMA_MODEL);
-        });
+        // --- Gemma 4 0.8B (local model, on-demand download) ---
+        gemma4StatusLabel = findViewById(R.id.gemma4ModelStatusLabel);
+        gemma4ProgressBar = findViewById(R.id.gemma4ProgressBar);
+        gemma4DownloadBtn = findViewById(R.id.buttonGemma4Download);
+        gemma4DeleteBtn = findViewById(R.id.buttonGemma4Delete);
+        updateGemma4UiState();
+        gemma4DownloadBtn.setOnClickListener(v -> startGemma4Download());
+        gemma4DeleteBtn.setOnClickListener(v -> deleteGemma4Model());
 
         // --- Save button ---
         findViewById(R.id.buttonSave).setOnClickListener(v -> {
@@ -216,41 +209,78 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK || data == null) return;
-        Uri uri = data.getData();
-        if (uri == null) return;
-
-        // Take persistent permission
-        try {
-            getContentResolver().takePersistableUriPermission(
-                    uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        } catch (Exception ignored) { }
-
-        String resolvedPath = Util.getModelPathFromUri(this, uri);
-        String pathOrUri = resolvedPath != null ? resolvedPath : uri.toString();
-
-        String unresolvedWarning = "\n(Attenzione: impossibile risolvere il path dal content URI. "
-                + "Verifica che l'app abbia il permesso \"Accesso a tutti i file\" oppure sposta il file nella cartella Download.)";
-
-        if (requestCode == REQUEST_PICK_GEMMA_MODEL) {
-            SharedPreferencesHelper.save(this, SharedPreferencesHelper.GEMMA3N_MODEL_PATH, pathOrUri);
-            updateGemma3nPathLabel(pathOrUri);
-            if (resolvedPath == null) {
-                gemma3nModelPathLabel.setText("URI: " + pathOrUri + unresolvedWarning);
-            } else if (!new java.io.File(resolvedPath).canRead()) {
-                requestAllFilesAccessIfNeeded();
-            }
+    protected void onDestroy() {
+        super.onDestroy();
+        if (gemma4Downloader != null) {
+            gemma4Downloader.cancel();
+            gemma4Downloader = null;
         }
     }
 
-    private void updateGemma3nPathLabel(String path) {
-        if (path == null || path.isEmpty()) {
-            gemma3nModelPathLabel.setText("Path modello: (non configurato)");
+    private void updateGemma4UiState() {
+        boolean present = Gemma4ModelDownloader.isModelPresent(this);
+        gemma4ProgressBar.setVisibility(View.GONE);
+        if (present) {
+            gemma4StatusLabel.setText(R.string.gemma4_ready);
+            gemma4DownloadBtn.setVisibility(View.GONE);
+            gemma4DeleteBtn.setVisibility(View.VISIBLE);
         } else {
-            gemma3nModelPathLabel.setText("Path modello: " + path);
+            gemma4StatusLabel.setText(R.string.gemma4_not_downloaded);
+            gemma4DownloadBtn.setVisibility(View.VISIBLE);
+            gemma4DeleteBtn.setVisibility(View.GONE);
         }
+    }
+
+    private void startGemma4Download() {
+        // Hide both buttons during the download itself; updateGemma4UiState()
+        // restores visibility based on file presence after the run terminates.
+        gemma4DownloadBtn.setVisibility(View.GONE);
+        gemma4DeleteBtn.setVisibility(View.GONE);
+        gemma4ProgressBar.setProgress(0);
+        gemma4ProgressBar.setVisibility(View.VISIBLE);
+        gemma4StatusLabel.setText(getString(R.string.gemma4_downloading, 0, "0", "?"));
+        gemma4Downloader = new Gemma4ModelDownloader(this);
+        gemma4Downloader.download(new Gemma4ModelDownloader.Listener() {
+            @Override
+            public void onProgress(long bytesRead, long totalBytes) {
+                int pct = totalBytes > 0 ? (int) (100L * bytesRead / totalBytes) : 0;
+                gemma4ProgressBar.setProgress(pct);
+                gemma4StatusLabel.setText(getString(
+                        R.string.gemma4_downloading,
+                        pct,
+                        Gemma4ModelDownloader.formatBytes(bytesRead),
+                        Gemma4ModelDownloader.formatBytes(totalBytes)));
+            }
+
+            @Override
+            public void onComplete(File file) {
+                SharedPreferencesHelper.save(ConfigActivity.this,
+                        SharedPreferencesHelper.GEMMA4_MODEL_PATH, file.getAbsolutePath());
+                gemma4Downloader = null;
+                updateGemma4UiState();
+            }
+
+            @Override
+            public void onError(String message) {
+                gemma4Downloader = null;
+                updateGemma4UiState();
+                gemma4StatusLabel.setText(getString(R.string.gemma4_download_failed, message));
+            }
+
+            @Override
+            public void onCancelled() {
+                gemma4Downloader = null;
+                updateGemma4UiState();
+                gemma4StatusLabel.setText(R.string.gemma4_download_cancelled);
+            }
+        });
+    }
+
+    private void deleteGemma4Model() {
+        Gemma4ModelDownloader.deleteModel(this);
+        SharedPreferencesHelper.save(this, SharedPreferencesHelper.GEMMA4_MODEL_PATH, "");
+        updateGemma4UiState();
+        Toast.makeText(this, R.string.gemma4_deleted, Toast.LENGTH_SHORT).show();
     }
 
     /** Returns the index of modelId in modelIds (excluding the last "Custom" entry), or -1. */
@@ -260,17 +290,6 @@ public class ConfigActivity extends AppCompatActivity {
             if (modelIds[i].equals(modelId)) return i;
         }
         return -1;
-    }
-
-    private void requestAllFilesAccessIfNeeded() {
-        if (!Environment.isExternalStorageManager()) {
-            Toast.makeText(this,
-                    "Per usare modelli locali, abilita \"Accesso a tutti i file\" nella schermata che si aprirà.",
-                    Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            startActivity(intent);
-        }
     }
 
     @Override

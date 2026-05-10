@@ -14,7 +14,7 @@ import online.avogadro.opencv4tasker.app.SharedPreferencesHelper
 import online.avogadro.opencv4tasker.claudeai.HumansDetectorClaudeAI
 import online.avogadro.opencv4tasker.databinding.ActivityConfigDetectHumansBinding
 import online.avogadro.opencv4tasker.gemini.HumansDetectorGemini
-import online.avogadro.opencv4tasker.gemma3n.HumansDetectorGemma3n
+import online.avogadro.opencv4tasker.gemma4.HumansDetectorGemma4
 import online.avogadro.opencv4tasker.openrouter.HumansDetectorOpenRouter
 import online.avogadro.opencv4tasker.app.Util
 import online.avogadro.opencv4tasker.tensorflowlite.HumansDetectorTensorFlow
@@ -23,7 +23,7 @@ const val ENGINE_CLAUDEAI = "CLAUDE"
 const val ENGINE_TENSORFLOW = "TENSORFLOW"
 const val ENGINE_GEMINI = "GEMINI"
 const val ENGINE_OPENROUTER = "OPENROUTER"
-const val ENGINE_GEMMA3N = "GEMMA3N"
+const val ENGINE_GEMMA4 = "GEMMA4"
 
 class DetectHumansActionHelper(config: TaskerPluginConfig<DetectHumansInput>) : TaskerPluginConfigHelper<DetectHumansInput, DetectHumansOutput, DetectHumansActionRunner>(config) {
     override val runnerClass: Class<DetectHumansActionRunner> get() = DetectHumansActionRunner::class.java
@@ -46,14 +46,14 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
         binding.radioEngineGemini.isChecked = false
         binding.radioEngineOpenRouter.isChecked = false
         binding.radioEngineTensorflowLite.isChecked = false
-        binding.radioEngineGemma3n.isChecked = false
+        binding.radioEngineGemma4.isChecked = false
 
         // Set the appropriate radio button based on the engine
         when (input.regular.engine) {
             ENGINE_CLAUDEAI -> binding.radioEngineClaudeAI.isChecked = true
             ENGINE_GEMINI -> binding.radioEngineGemini.isChecked = true
             ENGINE_OPENROUTER -> binding.radioEngineOpenRouter.isChecked = true
-            ENGINE_GEMMA3N -> binding.radioEngineGemma3n.isChecked = true
+            ENGINE_GEMMA4 -> binding.radioEngineGemma4.isChecked = true
             else -> binding.radioEngineTensorflowLite.isChecked = true // default (backward compat)
         }
 
@@ -81,17 +81,17 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
             if (ENGINE_OPENROUTER == input.regular.engine) binding.radioEngineTensorflowLite.isChecked = true
         }
 
-        // disable Gemma 3n if model file is not configured or not found
-        if (!isGemma3nAvailable()) {
-            binding.radioEngineGemma3n.isEnabled = false
-            binding.radioEngineGemma3n.isChecked = false
-            if (ENGINE_GEMMA3N == input.regular.engine) binding.radioEngineTensorflowLite.isChecked = true
+        // disable Gemma 4 if model file is not configured or not found
+        if (!isGemma4Available()) {
+            binding.radioEngineGemma4.isEnabled = false
+            binding.radioEngineGemma4.isChecked = false
+            if (ENGINE_GEMMA4 == input.regular.engine) binding.radioEngineTensorflowLite.isChecked = true
         }
 
     }
 
-    private fun isGemma3nAvailable(): Boolean {
-        val path = SharedPreferencesHelper.get(this, SharedPreferencesHelper.GEMMA3N_MODEL_PATH)
+    private fun isGemma4Available(): Boolean {
+        val path = SharedPreferencesHelper.get(this, SharedPreferencesHelper.GEMMA4_MODEL_PATH)
         return Util.isModelFileAccessible(path)
     }
 
@@ -100,7 +100,7 @@ class ActivityConfigDetectHumansAction : Activity(), TaskerPluginConfig<DetectHu
             binding.radioEngineClaudeAI.isChecked -> ENGINE_CLAUDEAI
             binding.radioEngineGemini.isChecked -> ENGINE_GEMINI
             binding.radioEngineOpenRouter.isChecked -> ENGINE_OPENROUTER
-            binding.radioEngineGemma3n.isChecked -> ENGINE_GEMMA3N
+            binding.radioEngineGemma4.isChecked -> ENGINE_GEMMA4
             else -> ENGINE_TENSORFLOW  // default (backward compat)
         }
         return TaskerInput<DetectHumansInput>(DetectHumansInput(binding.editFileName.text?.toString(), engine))
@@ -150,13 +150,13 @@ class DetectHumansActionRunner : TaskerPluginRunnerAction<DetectHumansInput, Det
             resultReason = hto.getLastResponse()
             if (result==-1)
                 resultError = hto.getLastError()
-        } else if (ENGINE_GEMMA3N.equals(input.regular.engine)) {
-            val htg3n = HumansDetectorGemma3n()
-            htg3n.setup(context)
-            result = htg3n.detectPerson(context, input.regular.imagePath)
-            resultReason = htg3n.getLastResponse()
+        } else if (ENGINE_GEMMA4.equals(input.regular.engine)) {
+            val hq = HumansDetectorGemma4()
+            hq.setup(context)
+            result = hq.detectPerson(context, input.regular.imagePath)
+            resultReason = hq.getLastResponse()
             if (result==-1)
-                resultError = htg3n.getLastError()
+                resultError = hq.getLastError()
         } else {
             // default = TENSORFLOW
             var path = input.regular.imagePath;

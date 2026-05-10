@@ -16,7 +16,7 @@ public class SharedPreferencesHelper {
     public static final String CLAUDE_MODEL = "CLAUDE_MODEL";
     public static final String GEMINI_MODEL = "GEMINI_MODEL";
     public static final String LAST_IMAGE_PATH = "LAST_IMAGE_PATH";
-    public static final String GEMMA3N_MODEL_PATH = "GEMMA3N_MODEL_PATH";
+    public static final String GEMMA4_MODEL_PATH = "GEMMA4_MODEL_PATH";
     public static final String NOTIFICATION_EVENT_ENABLED = "NOTIFICATION_EVENT_ENABLED";
     private static final String PASSWORD = "u2fg393ujk.%!kspa5fg393ujk.%!kra"; // Not recommended
 
