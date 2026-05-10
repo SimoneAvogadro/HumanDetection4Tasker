@@ -222,18 +222,20 @@ public class ConfigActivity extends AppCompatActivity {
         gemma4ProgressBar.setVisibility(View.GONE);
         if (present) {
             gemma4StatusLabel.setText(R.string.gemma4_ready);
-            gemma4DownloadBtn.setEnabled(false);
-            gemma4DeleteBtn.setEnabled(true);
+            gemma4DownloadBtn.setVisibility(View.GONE);
+            gemma4DeleteBtn.setVisibility(View.VISIBLE);
         } else {
             gemma4StatusLabel.setText(R.string.gemma4_not_downloaded);
-            gemma4DownloadBtn.setEnabled(true);
-            gemma4DeleteBtn.setEnabled(false);
+            gemma4DownloadBtn.setVisibility(View.VISIBLE);
+            gemma4DeleteBtn.setVisibility(View.GONE);
         }
     }
 
     private void startGemma4Download() {
-        gemma4DownloadBtn.setEnabled(false);
-        gemma4DeleteBtn.setEnabled(false);
+        // Hide both buttons during the download itself; updateGemma4UiState()
+        // restores visibility based on file presence after the run terminates.
+        gemma4DownloadBtn.setVisibility(View.GONE);
+        gemma4DeleteBtn.setVisibility(View.GONE);
         gemma4ProgressBar.setProgress(0);
         gemma4ProgressBar.setVisibility(View.VISIBLE);
         gemma4StatusLabel.setText(getString(R.string.gemma4_downloading, 0, "0", "?"));
@@ -261,19 +263,15 @@ public class ConfigActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 gemma4Downloader = null;
-                gemma4ProgressBar.setVisibility(View.GONE);
+                updateGemma4UiState();
                 gemma4StatusLabel.setText(getString(R.string.gemma4_download_failed, message));
-                gemma4DownloadBtn.setEnabled(true);
-                gemma4DeleteBtn.setEnabled(Gemma4ModelDownloader.isModelPresent(ConfigActivity.this));
             }
 
             @Override
             public void onCancelled() {
                 gemma4Downloader = null;
-                gemma4ProgressBar.setVisibility(View.GONE);
+                updateGemma4UiState();
                 gemma4StatusLabel.setText(R.string.gemma4_download_cancelled);
-                gemma4DownloadBtn.setEnabled(true);
-                gemma4DeleteBtn.setEnabled(Gemma4ModelDownloader.isModelPresent(ConfigActivity.this));
             }
         });
     }
