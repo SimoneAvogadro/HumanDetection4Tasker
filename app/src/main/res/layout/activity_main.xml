@@ -61,13 +61,11 @@
             android:checked="true"
             android:text="@string/engine_tensorflow" />
 
-        <!-- Gemma 3n: temporarily disabled (crashes at runtime, needs investigation) -->
         <RadioButton
-            android:id="@+id/radioEngineGemma3n"
+            android:id="@+id/radioEngineGemma4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/engine_gemma3n"
-            android:visibility="gone" />
+            android:text="@string/engine_gemma4" />
 
     </RadioGroup>
 

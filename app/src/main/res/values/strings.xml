@@ -21,8 +21,14 @@
     <string name="engine_gemini">Gemini (online)</string>
     <string name="engine_openrouter">OpenRouter (online)</string>
     <string name="engine_tensorflow">Tensorflow Lite (local device)</string>
-    <string name="engine_gemma3n">Gemma 3n (local device)</string>
-    <string name="engine_gemma3n_disabled">Gemma 3n (local device) [enable in settings]</string>
+    <string name="engine_gemma4">Gemma 4 E2B (local device)</string>
+    <string name="engine_gemma4_disabled">Gemma 4 E2B (download in settings)</string>
+    <string name="gemma4_not_downloaded">Status: not downloaded</string>
+    <string name="gemma4_ready">Status: model ready</string>
+    <string name="gemma4_downloading">Downloading: %1$d%% (%2$s / %3$s)</string>
+    <string name="gemma4_download_failed">Download failed: %1$s</string>
+    <string name="gemma4_download_cancelled">Download cancelled</string>
+    <string name="gemma4_deleted">Model deleted</string>
     <!-- Model selection labels -->
     <string name="model_custom">Custom…</string>
     <string name="custom_model_hint_claude">e.g. claude-sonnet-4-6</string>

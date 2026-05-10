@@ -2,6 +2,18 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 // apply plugin: 'com.google.gms.google-services'
 
+// Read signing credentials from local.properties (git-ignored).
+// Required keys: KEYSTORE_FILE, KEY_ALIAS, KEYSTORE_PASSWORD, KEY_PASSWORD.
+def signingProps = new Properties()
+def signingPropsFile = rootProject.file('local.properties')
+if (signingPropsFile.exists()) {
+    signingPropsFile.withInputStream { signingProps.load(it) }
+}
+def hasReleaseSigning = signingProps['KEYSTORE_FILE'] \
+        && signingProps['KEY_ALIAS'] \
+        && signingProps['KEYSTORE_PASSWORD'] \
+        && signingProps['KEY_PASSWORD']
+
 android {
     compileSdkVersion 36
     buildToolsVersion "35.0.0"
@@ -24,10 +36,24 @@ android {
         }
 
     }
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(signingProps['KEYSTORE_FILE'])
+                storePassword signingProps['KEYSTORE_PASSWORD']
+                keyAlias signingProps['KEY_ALIAS']
+                keyPassword signingProps['KEY_PASSWORD']
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -89,8 +115,8 @@ dependencies {
     // Tasker plugin
     implementation 'com.joaomgcd:taskerpluginlibrary:0.4.10'
 
-    // LiteRT-LM: on-device LLM inference (for Gemma 3n local engine)
-    implementation 'com.google.ai.edge.litertlm:litertlm-android:0.8.0'
+    // LiteRT-LM: on-device multimodal LLM inference (Qwen 3.5 0.8B)
+    implementation 'com.google.ai.edge.litertlm:litertlm-android:0.11.0'
 
 
 }

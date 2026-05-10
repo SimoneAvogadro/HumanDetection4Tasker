@@ -197,67 +197,69 @@
 
         </LinearLayout>
 
-        <!-- ═══ GEMMA 3n ═══ (temporarily disabled - crashes at runtime, needs investigation) -->
+        <!-- ═══ GEMMA 4 E2B ═══ -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CCCCCC" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Gemma 4 E2B (local device)"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textSize="12sp"
+            android:text="Multimodal VLM on-device (~2.4 GB, Apache-2.0). Tap Download to fetch the model into the app's private storage." />
+
+        <TextView
+            android:id="@+id/gemma4ModelStatusLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/gemma4_not_downloaded"
+            android:textSize="12sp"
+            android:textColor="#555555" />
+
+        <ProgressBar
+            android:id="@+id/gemma4ProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="#CCCCCC" />
-
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/buttonGemma4Download"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="Gemma 3n (locale)"
-                android:textStyle="bold"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Download model" />
 
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/buttonGemma4Delete"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textSize="12sp"
-                android:text="Modello VLM on-device (~3.4 GB). Scarica il file .litertlm da HuggingFace e selezionalo qui sotto." />
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="Delete" />
 
-            <TextView
-                android:id="@+id/gemma3nModelPathLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Path modello: (non configurato)"
-                android:textSize="12sp"
-                android:textColor="#555555" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/buttonGemma3nDownload"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp"
-                    android:text="Scarica da HuggingFace" />
-
-                <Button
-                    android:id="@+id/buttonGemma3nSelect"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp"
-                    android:text="Seleziona file" />
-
-            </LinearLayout>
         </LinearLayout>
 
         <Button
