@@ -98,7 +98,7 @@ Engine selection is persisted using `SharedPreferencesHelper` and each engine im
 
 ## Model File Handling
 
-- `Util.getModelPathFromUri()` resolves content URIs to filesystem paths using 4 strategies (MediaStore DATA, DownloadsProvider msf: lookup, /proc/self/fd symlink, DISPLAY_NAME in Download dirs) — used by file pickers in older flows; not used by Qwen 3.5 (auto-download path stays in app-private storage).
+- `Util.getModelPathFromUri()` resolves content URIs to filesystem paths using 4 strategies (MediaStore DATA, DownloadsProvider msf: lookup, /proc/self/fd symlink, DISPLAY_NAME in Download dirs) — used by file pickers in older flows; not used by Gemma 4 (auto-download path stays in app-private storage).
 - `Util.isModelFileAccessible()` uses `canRead() || exists()` to handle Android 11+ scoped storage
 - `Gemma4ModelDownloader` (in `online.avogadro.opencv4tasker.gemma4`) downloads the multimodal `.litertlm` bundle into `context.filesDir/models/gemma-4-E2B-it.litertlm` via `HttpURLConnection`, with `*.partial` staging file and atomic rename on completion. Pre-checks free disk space (model size + 100 MB headroom) before writing any bytes. Constants `MODEL_URL` / `MODEL_FILENAME` and helpers `isModelPresent()`, `deleteModel()`, `formatBytes()` live in its companion object.
 - ABI filters: `armeabi-v7a` and `arm64-v8a` only (no x86/x86_64)

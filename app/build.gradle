@@ -115,7 +115,7 @@ dependencies {
     // Tasker plugin
     implementation 'com.joaomgcd:taskerpluginlibrary:0.4.10'
 
-    // LiteRT-LM: on-device multimodal LLM inference (Qwen 3.5 0.8B)
+    // LiteRT-LM: on-device multimodal LLM inference (Gemma 4 E2B)
     implementation 'com.google.ai.edge.litertlm:litertlm-android:0.11.0'
 
 
