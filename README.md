@@ -2,6 +2,27 @@ Plugin app for Tasker and MacroDroid to provide Humans Detection
 
 Licensed under GPL v3
 
+---
+
+## ✨ NEW in v1.9.0 — Fully local multimodal AI on your phone
+
+Run **Google Gemma 4 E2B** — a state-of-the-art multimodal Vision-Language Model — entirely on your device, with **no cloud, no API keys, no data leaving your phone**. The model (~2.4 GB) is downloaded on demand from HuggingFace into the app's private storage and runs via [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) on the CPU.
+
+Why this matters:
+* 🔒 **Privacy**: images never leave the device — ideal for security camera footage, family photos, anything sensitive
+* 💸 **Zero cost**: no Anthropic / Google / OpenRouter subscription required
+* 📡 **Works offline**: useful when your automation runs without connectivity
+* 🧠 **Real multimodal understanding**: can answer arbitrary questions about an image, not just "is there a person?"
+
+Requirements: ~3 GB of free RAM at inference time, ~2.5 GB of free storage, arm64-v8a device (any reasonably modern Android phone). Download is triggered with one tap from the app's Config screen.
+
+---
+
+V 1.9.0:
+* ADDED: **Gemma 4 E2B local multimodal engine** via LiteRT-LM 0.11 — on-device VLM, no cloud required (see highlight above)
+* ADDED: ConfigActivity now shows/hides the Download/Delete buttons based on whether the model bundle is already present
+* CHANGED: bumped Kotlin to 2.3.21 (required by LiteRT-LM AAR metadata)
+
 V 1.8.0:
 * FIXED: Gemini deprecated model ID migration (gemini-3-pro-preview → gemini-3.1-pro-preview)
 * CHANGED: removed x86/x86_64 ABI filters, reducing APK size (no Android devices use x86 since 2018)
@@ -55,8 +76,8 @@ Features:
 * can parse PNG and JPG (all engines)
 
 Supported person detection/image analysis engines:
-* MediaPipe (local, uses TensorFlow model): runs entirely on the phone, limited accuracy but very privacy-savvy
-* Gemma 4 E2B (local, multimodal VLM via LiteRT-LM): runs entirely on the phone, model (~2.4 GB) is downloaded on-demand from HuggingFace into private app storage. Better accuracy than MediaPipe at the cost of disk space and ~3 GB of RAM at inference time
+* **Gemma 4 E2B (local, multimodal VLM via LiteRT-LM)** ⭐ NEW in 1.9.0: runs entirely on the phone with no cloud, no API key and no data leaving the device. Multimodal VLM with much better accuracy than MediaPipe. Model bundle (~2.4 GB) is auto-downloaded on demand from HuggingFace into private app storage; ~3 GB of RAM needed at inference time
+* MediaPipe (local, uses TensorFlow model): runs entirely on the phone, limited accuracy but very privacy-savvy and very low resource usage
 * Claude Sonnet 4.6 (online): will send the data to Anthropic's cloud LLM, which can perform many complex tasks. Very accurate
 * Gemini Flash 2.5 (online): will send the data to Google's cloud LLM, which can perform many complex tasks. Accurate and cheap
 * OpenRouter (online): will send the data to OpenRouter's cloud, which in turn will forward to the LLM you have selected. This way you can choose the cost (from free to very expensive) and accuracy of the model
